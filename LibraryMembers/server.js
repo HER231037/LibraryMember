@@ -19,12 +19,12 @@ const LibraryMember = [
 
 //Simple Route erstellen:
 app.get("/", (req, res) => {
-  res.send("Hello, express from Express!");
+  return res.send("Hello, express from Express!");
 });
 
 //Get für weiteren Pfad erstellt.
 app.get("/LibraryMember", (req, res) => {
-  res.json(LibraryMember);
+  return res.json(LibraryMember);
 });
 
 //Bekomme bestimmten Member:
@@ -38,7 +38,7 @@ app.get("/LibraryMember/:id", (req, res) => {
   if(!member) {
     return res.status(404).json({error: "LibraryMember not found!"});
     }
-    res.json(member);
+  return res.json(member);
 });
 //hinzufuegen
 app.post("/LibraryMember", (req, res) => {
@@ -57,7 +57,7 @@ app.post("/LibraryMember", (req, res) => {
   //füge das neu erstelle Mitglied der Liste hinzu
   LibraryMember.push(newMember);
   //antworte mit status 200 und dem neuen Mitglied
-  res.status(200).json(newMember);
+  return res.status(200).json(newMember);
 });
 //Ganzes Objekt ändern
 app.put("/LibraryMember/:id", (req, res) => {
@@ -75,23 +75,36 @@ app.put("/LibraryMember/:id", (req, res) => {
     }
   
     LibraryMember[pos] = {id, name, member_id};
-    res.json(LibraryMember[pos]);
+    return res.json(LibraryMember[pos]);
 });
 
 //bestimmten Wert in Objekt ändern
 app.patch("/LibraryMember/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const { name, member_id } = req.body;
-
+  //suche übereinstimmende ID
   const member = LibraryMember.find(m => m.id === id);
   if(!member){
     return res.status(404).json({error: "LibraryMember nicht gefunden!"});
   }
-
+  //kontrolliere, welche Werte übergeben wurden und ändere diese
   if(name !== undefined) member.name = name;
   if(member_id !== undefined) member.member_id = member_id;
 
-  res.json(member);
+  return res.json(member);
+});
+
+//Objekt löschen
+app.delete("/LibraryMember/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const pos = LibraryMember.findIndex(m => m.id === id);
+
+  if(pos === -1){
+    return res.status(404).json({error: "LibraryMember nicht gefunden!"});
+  }
+
+  LibraryMember.splice(pos, 1);
+  return res.status(204).send();
 });
 
 //Server starten:
