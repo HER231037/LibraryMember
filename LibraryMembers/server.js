@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+// verwende environment Port, oder 3000
+const port = process.env.PORT || 3000;
 
 const LibraryMembers = [
   {id: 1,   name: "Lukas",      member_id: "MEM001"},
@@ -15,13 +16,28 @@ const LibraryMembers = [
   {id: 10,  name: "Brian",      member_id: "MEM010"},
 ];
 
-//Simple Router erstellen:
+//Simple Route erstellen:
 app.get("/", (req, res) => {
   res.send("Hello, express from Express!");
 });
 
+//Get für weiteren Pfad erstellt.
 app.get("/LibraryMembers", (req, res) => {
   res.json(LibraryMembers);
+});
+
+//Get bestimmten Member:
+app.get("/LibraryMembers/:id", (req, res) => {
+  //Hole dir die ID aus dem Pfad und wandle die ID in einen INT Wert um
+  const id = parseInt(req.params.id);
+  //Gehe das Array durch und vergleiche ob eine ID aus der Liste mit der
+  //uebergebenen Liste ueberinstimmt
+  const member = LibraryMembers.find(m => m.id === id);
+
+  if(!member) {
+    return res.status(404).json({error: "LibraryMember not found!"});
+    }
+    res.json(member);
 });
 
 //Server starten:
