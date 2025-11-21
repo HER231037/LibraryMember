@@ -4,6 +4,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
 
+const path = require("path");
+app.use(express.static(path.join(__dirname, "public")));
+
 const LibraryMember = [
   {id: 1,   name: "Lukas",      member_id: "MEM001"},
   {id: 2,   name: "Patrick",    member_id: "MEM002"},
