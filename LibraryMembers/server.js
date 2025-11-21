@@ -27,7 +27,7 @@ app.get("/LibraryMember", (req, res) => {
   res.json(LibraryMember);
 });
 
-//Get bestimmten Member:
+//Bekomme bestimmten Member:
 app.get("/LibraryMember/:id", (req, res) => {
   //Hole dir die ID aus dem Pfad und wandle die ID in einen INT Wert um
   const id = parseInt(req.params.id);
@@ -40,7 +40,7 @@ app.get("/LibraryMember/:id", (req, res) => {
     }
     res.json(member);
 });
-
+//hinzufuegen
 app.post("/LibraryMember", (req, res) => {
   //hole die Daten aus dem Body und weise sie den Variablen name und member_id zu
   const { name, member_id } = req.body;
@@ -58,6 +58,40 @@ app.post("/LibraryMember", (req, res) => {
   LibraryMember.push(newMember);
   //antworte mit status 200 und dem neuen Mitglied
   res.status(200).json(newMember);
+});
+//Ganzes Objekt ändern
+app.put("/LibraryMember/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, member_id } = req.body;
+
+  if(!name || !member_id){
+    return res.status(400).json({error: "Name und Member_ID erforderlich!"});
+  }
+  //suche objekt mit selber ID wie übergeben und gib der Variable pos die indexnr
+    const pos = LibraryMember.findIndex(m => m.id === id);
+    //wenn keine übereinstimmung stattgefunden hat, dann hat pos -1
+    if(pos === -1){
+      return res.status(404).json({error: "LibraryMember nicht gefunden!"})
+    }
+  
+    LibraryMember[pos] = {id, name, member_id};
+    res.json(LibraryMember[pos]);
+});
+
+//bestimmten Wert in Objekt ändern
+app.patch("/LibraryMember/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, member_id } = req.body;
+
+  const member = LibraryMember.find(m => m.id === id);
+  if(!member){
+    return res.status(404).json({error: "LibraryMember nicht gefunden!"});
+  }
+
+  if(name !== undefined) member.name = name;
+  if(member_id !== undefined) member.member_id = member_id;
+
+  res.json(member);
 });
 
 //Server starten:
