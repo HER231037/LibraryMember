@@ -53,3 +53,43 @@ async function fetchLibraryMember() {
 //Wurde die Seite vollständig geladen, dann wird das JS ausgeführt
 //und die Tabelle erstellt und befüllt.
 window.addEventListener("DOMContentLoaded", fetchLibraryMember);
+
+async function addClick() {
+    const nameInput = document.getElementById("member-name");
+    const name = nameInput.value.trim();
+    const idInput = document.getElementById("member-id");
+    const member_id = idInput.value.trim();
+    const button = document.getElementById("add-btn");
+    const statusEl = document.getElementById("status");
+
+    if (!name || !member_id) {
+      statusEl.textContent = "Name and id required.";
+      return;
+    }
+
+    button.disabled = true;
+    await addMember(name, member_id);
+    button.disabled = false;
+
+    nameInput.value = "";
+    idInput.value = "";
+    nameInput.focus();
+}
+
+
+async function addMember(name, member_id) {
+  const statusEl = document.getElementById("status");
+  try {
+    const res = await fetch("/LibraryMember", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, member_id }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await fetchLibraryMember();
+    statusEl.textContent = "LibraryMember added.";
+  } catch (err) {
+    console.error(err);
+    statusEl.textContent = `Error while added a LibraryMember: ${err.message}`;
+  }
+}
