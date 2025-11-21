@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f65ff51c-6674-4d43-beea-f9b8e00dc858/resourceGroups/appsvc_linux_swedencentral/providers/Microsoft.Web/sites/HertenbergerLibraryMember",
+    "appService.deploySubpath": "LibraryMembers"
+}
