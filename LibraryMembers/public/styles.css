@@ -1,37 +1,60 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Times New Roman', Times, serif;
   margin: 0;
-  background:tan;
+  background: tan;
   color: #111;
 }
 
 header {
-  background-color:saddlebrown;
+  background-color: saddlebrown;
   text-align: center;
   color: black;
   padding: 15px;
+  display: block;
+}
+
+.layout {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
 }
 
 h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 30px;
+  text-decoration: underline;
 }
 
 main {
+  flex: 2;
   padding: 20px;
-  max-width: 900px;
-  margin: auto;
+  max-width: 2fr;
+}
+
+aside {
+  flex: 1;
+  max-width: 1fr;
+}
+
+#book1,
+#book2 {
+  font-size: 600px;
+  position: absolute;
+}
+
+#book2 {
+  display: none;
 }
 
 .status {
   margin-bottom: 10px;
   font-size: 14px;
   color: #555;
+  text-align: right;
 }
 
 .table-wrapper {
-  background: #fff;
-  border-radius: 8px;
+  background: wheat;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
 }
@@ -39,41 +62,57 @@ main {
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+
 }
 
 th,
 td {
   padding: 10px;
-  border-bottom: 1px solid #eee;
   text-align: left;
 }
 
-tr:hover {
-  background: #f9fbff;
+.member:hover {
+  background: tan;
+}
+
+input, button {
+  border: none;
+  padding: 3px 8px;
+  border-radius: 10px;
 }
 
 .input-section {
   display: flex;
+  flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
+  max-width: 300px;
+  margin: 0 auto 0 auto;
 }
 
-#student-input {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+input{
+  background-color: wheat;
 }
 
 #add-btn {
-  padding: 8px 16px;
-  background: #0078ff;
-  color: white;
-  border: none;
+  padding: 7px 12px;
+  border: 3px solid transparent;
+  background: saddlebrown;
   border-radius: 8px;
-  cursor: pointer;
 }
 
 #add-btn:hover {
-  background: #005fcc;
+  border-color: black;
+}
+
+
+.delete-btn, .edit-btn, .save-btn, .cancel-btn {
+  border: 3px solid transparent;
+  background: saddlebrown;
+  border-radius: 8px;
+}
+
+.delete-btn:hover, .edit-btn:hover, .save-btn:hover, .cancel-btn:hover{
+  border-color: black;
 }

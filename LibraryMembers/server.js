@@ -8,16 +8,16 @@ const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
 
 const LibraryMember = [
-  { id: 1, name: "Lukas", member_id: "MEM001" },
-  { id: 2, name: "Patrick", member_id: "MEM002" },
-  { id: 3, name: "Daniel", member_id: "MEM003" },
-  { id: 4, name: "Sophie", member_id: "MEM004" },
-  { id: 5, name: "Nikola", member_id: "MEM005" },
-  { id: 6, name: "Mladen", member_id: "MEM006" },
-  { id: 7, name: "Alexander", member_id: "MEM007" },
-  { id: 8, name: "Lisa", member_id: "MEM008" },
-  { id: 9, name: "Markus", member_id: "MEM009" },
-  { id: 10, name: "Brian", member_id: "MEM010" },
+  { id: 1,  name: "Anna Leitner",       member_id: "AL-203A" },
+  { id: 2,  name: "Jonas Berger",       member_id: "JB-517C" },
+  { id: 3,  name: "Mara Köstler",       member_id: "MK-441B" },
+  { id: 4,  name: "Lukas Ehrenfeld",    member_id: "LE-389D" },
+  { id: 5,  name: "Clara Mittermayr",   member_id: "CM-120F" },
+  { id: 6,  name: "Samuel Hartwig",     member_id: "SH-775E" },
+  { id: 7,  name: "Nina Stadler",       member_id: "NS-632P" },
+  { id: 8,  name: "Felix Kramer",       member_id: "FK-908M" },
+  { id: 9,  name: "Katrin Blocher",     member_id: "KB-254R" },
+  { id: 10, name: "Dominik Herzog",     member_id: "DH-781Q" },
 ];
 
 //Simple Route erstellen:

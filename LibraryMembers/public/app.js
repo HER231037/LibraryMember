@@ -26,6 +26,7 @@ async function fetchLibraryMember() {
         for (const m of members) {
             //erstellt eine neue Zeile
             const tr = document.createElement("tr");
+            tr.className = "member";
             //erstellt neue Spalten
             const tdId = document.createElement("td");
             //holt sich die id vom Objekt
@@ -170,6 +171,7 @@ async function deleteMember(id) {
         if (res.status === 204) {
             statusEl.textContent = `LibraryMember ${id} removed.`;
         } else {
+            const msg = await res.json().catch(() => ({}));
             throw new Error(msg.error || `HTTP ${res.status}`);
         }
     } catch (err) {
@@ -196,3 +198,21 @@ async function updateMember(id, data) {
         statusEl.textContent = `Fehler beim Aktualisieren: ${err.message}`;
     }
 }
+
+let state = 0;
+
+function toggleIcons() {
+    const b1 = document.getElementById("book1");
+    const b2 = document.getElementById("book2");
+
+    if (state === 0) {
+        b1.style.display = "none";
+        b2.style.display = "inline";
+        state = 1;
+    } else {
+        b1.style.display = "inline";
+        b2.style.display = "none";
+        state = 0;
+    }
+}
+setInterval(toggleIcons, 1000);
