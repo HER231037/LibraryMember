@@ -1,3 +1,4 @@
+let editingId = null;
 //sobald das HTML geladen wurde, wird dieses JS ausgeführt.
 async function fetchLibraryMember() {
     //Zugriff auf das Element mit der ID "Status" im DOM
@@ -36,17 +37,73 @@ async function fetchLibraryMember() {
             const tdMember_id = document.createElement("td");
             tdMember_id.textContent = m.member_id;
 
-            const delBtn = document.createElement("button");
-            delBtn.textContent = "Delete";
-            delBtn.className = "delete-btn";
-            delBtn.onclick = async () => {
-                if (!confirm(`Remove LibraryMember ${m.name}?`)) return;
-                await deleteMember(m.id);
-                await fetchLibraryMember();
-            };
+            const tdActions = document.createElement("td");
+            // NEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEU
+            if (editingId === m.id) {
+                // Edit mode
+                const nameInput = document.createElement("input");
+                nameInput.type = "text";
+                nameInput.value = m.name;
+                nameInput.className = "input-sm";
 
+                const member_IdInput = document.createElement("input");
+                member_IdInput.type = "text";
+                member_IdInput.value = m.member_id;
+                member_IdInput.className = "input-sm";
+
+                tdName.appendChild(nameInput);
+                tdMember_id.appendChild(member_IdInput);
+
+                const saveBtn = document.createElement("button");
+                saveBtn.textContent = "Speichern";
+                saveBtn.className = "save-btn";
+                saveBtn.onclick = async () => {
+                    if (!nameInput.value.trim() || !member_IdInput.value.trim()) {
+                        document.getElementById("status").textContent = "Name und Member_ID erforderlich.";
+                        return;
+                    }
+                    await updateMember(m.id, {
+                        name: nameInput.value.trim(),
+                        member_id: member_IdInput.value.trim(),
+                    });
+                    editingId = null;
+                    await fetchLibraryMember();
+                };
+
+                const cancelBtn = document.createElement("button");
+                cancelBtn.textContent = "Abbrechen";
+                cancelBtn.className = "cancel-btn";
+                cancelBtn.onclick = async () => {
+                    editingId = null;
+                    await fetchLibraryMember();
+                };
+
+                tdActions.append(saveBtn, " ", cancelBtn);
+            } else {
+                // View mode
+                tdName.textContent = m.name;
+                tdMember_id.textContent = m.member_id;
+
+                const editBtn = document.createElement("button");
+                editBtn.textContent = "Bearbeiten";
+                editBtn.className = "edit-btn";
+                editBtn.onclick = () => {
+                    editingId = m.id;
+                    fetchLibraryMember();
+                };
+                // NEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEU
+                const delBtn = document.createElement("button");
+                delBtn.textContent = "Delete";
+                delBtn.className = "delete-btn";
+                delBtn.onclick = async () => {
+                    if (!confirm(`Remove LibraryMember ${m.name}?`)) return;
+                    await deleteMember(m.id);
+                    await fetchLibraryMember();
+                };
+                tdActions.append(editBtn, " ", delBtn);
+            }
             //Fügt die Zellen in die Zeile hinzu
-            tr.append(tdId, tdName, tdMember_id, delBtn);
+            tr.append(tdId, tdName, tdMember_id, tdActions);
             //Fügt die Zeile in die Tabelle hinzu
             tbody.appendChild(tr);
         }
@@ -118,5 +175,24 @@ async function deleteMember(id) {
     } catch (err) {
         console.error(err);
         statusEl.textContent = `Error while removing: ${err.message}`;
+    }
+}
+
+async function updateMember(id, data) {
+    const statusEl = document.getElementById("status");
+    try {
+        const res = await fetch(`/LibraryMember/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            const msg = await res.json().catch(() => ({}));
+            throw new Error(msg.error || `HTTP ${res.status}`);
+        }
+        statusEl.textContent = `LibraryMember ${id} aktualisiert.`;
+    } catch (err) {
+        console.error(err);
+        statusEl.textContent = `Fehler beim Aktualisieren: ${err.message}`;
     }
 }
