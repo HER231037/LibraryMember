@@ -39,11 +39,13 @@ async function fetchLibraryMember() {
             tdMember_id.textContent = m.member_id;
 
             const tdActions = document.createElement("td");
-            // NEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEU
+            //beim Abrufen der Website ist die editingId immer 0, daher wird else ausgeführt.
             if (editingId === m.id) {
-                // Edit mode
+                // If wird ausgeführt, wenn ein Eintrag bearbetet wird
+                //hier werden zwei neue Eingabefelder pro Zeile erstellt.
                 const nameInput = document.createElement("input");
                 nameInput.type = "text";
+                //in die Zeile wird automatisch der aktuelle Text eingetragen.
                 nameInput.value = m.name;
                 nameInput.className = "input-sm";
 
@@ -51,26 +53,29 @@ async function fetchLibraryMember() {
                 member_IdInput.type = "text";
                 member_IdInput.value = m.member_id;
                 member_IdInput.className = "input-sm";
-
+                //die erstellten Eingabefelder werden nun hinzugefügt
                 tdName.appendChild(nameInput);
                 tdMember_id.appendChild(member_IdInput);
-
+                //neue Buttons werden erstellt
                 const saveBtn = document.createElement("button");
                 saveBtn.textContent = "Speichern";
                 saveBtn.className = "save-btn";
+                //wenn auf den Button gedrückt wird, dann wird der Code ausgeführt
                 saveBtn.onclick = async () => {
+                    //Kontrolle, ob in beiden Feldern etwas eingetragen ist.
                     if (!nameInput.value.trim() || !member_IdInput.value.trim()) {
                         document.getElementById("status").textContent = "Name und Member_ID erforderlich.";
                         return;
                     }
-                    await updateMember(m.id, {
-                        name: nameInput.value.trim(),
-                        member_id: member_IdInput.value.trim(),
-                    });
+                    //Starte die Methode und warte auf ein promise/antwort
+                    //hier werden die daten nochmals getrimmt und so übergeben.
+                    await updateMember(m.id, {name: nameInput.value.trim(), member_id: member_IdInput.value.trim()});
+                    //die editingID wird wieder auf 0 gesetzt, damit alle Zeilen wieder normal angezeigt werden
                     editingId = null;
+                    //Funktion wird für die nächste Zeile erneut ausgeführt
                     await fetchLibraryMember();
                 };
-
+                //Abbrechen Button wird erstellt.
                 const cancelBtn = document.createElement("button");
                 cancelBtn.textContent = "Abbrechen";
                 cancelBtn.className = "cancel-btn";
@@ -78,10 +83,10 @@ async function fetchLibraryMember() {
                     editingId = null;
                     await fetchLibraryMember();
                 };
-
+                //Buttons werden hinzugefügt.
                 tdActions.append(saveBtn, " ", cancelBtn);
             } else {
-                // View mode
+                // "Normale"-Ansicht der Zeilen wird erstellt.
                 tdName.textContent = m.name;
                 tdMember_id.textContent = m.member_id;
 
@@ -92,15 +97,16 @@ async function fetchLibraryMember() {
                     editingId = m.id;
                     fetchLibraryMember();
                 };
-                // NEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEUNEU
                 const delBtn = document.createElement("button");
                 delBtn.textContent = "Delete";
                 delBtn.className = "delete-btn";
                 delBtn.onclick = async () => {
+                    //popup mit bestätigung poppt auf.
                     if (!confirm(`Remove LibraryMember ${m.name}?`)) return;
                     await deleteMember(m.id);
                     await fetchLibraryMember();
                 };
+                 //Buttons werden hinzugefügt
                 tdActions.append(editBtn, " ", delBtn);
             }
             //Fügt die Zellen in die Zeile hinzu
@@ -122,6 +128,7 @@ async function fetchLibraryMember() {
 //und die Tabelle erstellt und befüllt.
 window.addEventListener("DOMContentLoaded", fetchLibraryMember);
 
+//button ist fix im html gecoded, führt diese funktion aus
 async function addClick() {
     const nameInput = document.getElementById("member-name");
     const name = nameInput.value.trim();
@@ -162,8 +169,6 @@ async function addMember(name, member_id) {
     }
 }
 
-
-
 async function deleteMember(id) {
     const statusEl = document.getElementById("status");
     try {
@@ -180,13 +185,13 @@ async function deleteMember(id) {
     }
 }
 
-async function updateMember(id, data) {
+async function updateMember(id, member_id) {
     const statusEl = document.getElementById("status");
     try {
         const res = await fetch(`/LibraryMember/${id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify(member_id),
         });
         if (!res.ok) {
             const msg = await res.json().catch(() => ({}));
