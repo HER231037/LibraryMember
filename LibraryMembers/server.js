@@ -1,10 +1,13 @@
+// Express wird eingebunden, damit dein Server HTTP-Anfragen verarbeiten kann.
 const express = require("express");
 const app = express();
 // verwende environment Port, oder 3000
 const port = process.env.PORT || 3000;
+// Aktiviert die JSON-Middleware von Express, damit Express die JSON-Daten versteht
 app.use(express.json());
-
+//Tool zum sicheren Zusammenbauen von Dateipfaden
 const path = require("path");
+//„Alles, was in diesem Ordner liegt, darf vom Browser heruntergeladen werden.“
 app.use(express.static(path.join(__dirname, "public")));
 
 const LibraryMember = [
@@ -62,6 +65,7 @@ app.post("/LibraryMember", (req, res) => {
   //antworte mit status 200 und dem neuen Mitglied
   return res.status(200).json(newMember);
 });
+
 //Ganzes Objekt ändern
 app.put("/LibraryMember/:id", (req, res) => {
   const id = parseInt(req.params.id);

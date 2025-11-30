@@ -107,7 +107,18 @@ async function fetchLibraryMember() {
                     await fetchLibraryMember();
                 };
                  //Buttons werden hinzugefügt
-                tdActions.append(editBtn, " ", delBtn);
+                const label = document.createElement("label");
+                const checkBox = document.createElement("input");
+                checkBox.type = "checkbox";
+                //Checkbox holt sich die Members ID
+                checkBox.dataset.id = m.id;
+
+                const spanBox = document.createElement("span");
+                spanBox.className = "check";
+
+                label.appendChild(checkBox);
+                label.appendChild(spanBox);
+                tdActions.append(editBtn, " ", delBtn, " ", label);
             }
             //Fügt die Zellen in die Zeile hinzu
             tr.append(tdId, tdName, tdMember_id, tdActions);
@@ -221,3 +232,20 @@ function toggleIcons() {
     }
 }
 setInterval(toggleIcons, 1000);
+
+async function delMembers() {
+    if (!confirm(`Remove LibraryMembers?`)) return;
+
+    let anz = 0;
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+
+    for (const cb of checked) {
+        const id = cb.dataset.id;
+        await deleteMember(id);
+        anz++;
+    }
+
+    confirm(`${anz} Members gelöscht`);
+    await fetchLibraryMember(); 
+}
+
