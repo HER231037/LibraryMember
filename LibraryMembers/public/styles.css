@@ -90,7 +90,7 @@ td {
   background: var(--hell);
 }
 
-input, button {
+input, button, a{
   border: none;
   padding: 3px 8px;
   border-radius: 10px;
@@ -116,13 +116,13 @@ input{
   border-radius: 8px;
 }
 
-.delete-btn, .edit-btn, .save-btn, .cancel-btn {
+.delete-btn, .edit-btn, .save-btn, .cancel-btn, .del-btn {
   border: 3px solid transparent;
   background: var(--dunkel);
   border-radius: 8px;
 }
 
-.delete-btn:hover, .edit-btn:hover, .save-btn:hover, .cancel-btn:hover, #add-btn:hover {
+.delete-btn:hover, .edit-btn:hover, .save-btn:hover, .cancel-btn:hover, #add-btn:hover, .del-btn:hover {
   border-color: black;
 }
 
@@ -132,16 +132,19 @@ footer{
   font-size: x-small;
 }
 
-#del-btn{
+.del-btn{
+  font: inherit;
   float: right;
   margin: 2px;
   padding: 8px;
   border-radius: 6px;
   background-color: var(--dunkel);
-
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: 'Times New Roman', Times, serif;
 }
 
 input[type="checkbox"] {
   accent-color: var(--dunkel);
 }
-

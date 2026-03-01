@@ -1,0 +1,63 @@
+:root{
+  --hell: tan;
+  --mittel: wheat;
+  --dunkel: saddlebrown;
+}
+
+html, body {
+  margin: 0;
+}
+
+.login-container {
+  max-width: 350px;
+  margin: 50px auto;
+  background: var(--mittel);
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid var(--dunkel);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  background: var(--dunkel);
+}
+
+button[type="submit"] {
+  background: var(--dunkel);
+  color: black;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}

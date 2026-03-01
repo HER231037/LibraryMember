@@ -1,0 +1,25 @@
+GET http://localhost:3000/LibraryMember
+
+###
+GET http://localhost:3000/LibraryMember/-3
+
+###
+POST http://localhost:3000/LibraryMember
+Content-Type: application/json
+
+{
+  "name": "Max Mustermann",
+  "member_id": "MM-789B"
+}
+
+###
+PATCH http://localhost:3000/LibraryMember/-1
+Content-Type: application/json
+
+{
+  "name": "Annalisa Algegenwärtig",
+  "member_id": "AA-585A"
+}
+
+###
+DELETE http://localhost:3000/LibraryMember/-2

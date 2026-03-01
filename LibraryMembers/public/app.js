@@ -1,35 +1,26 @@
 let editingId = null;
-//sobald das HTML geladen wurde, wird dieses JS ausgeführt.
 async function fetchLibraryMember() {
-    //Zugriff auf das Element mit der ID "Status" im DOM
     const statusEL = document.getElementById("status");
-    //Zugriff auf das tbody der Table mit der ID "member-table"
     const tbody = document.querySelector("#member-table tbody");
 
     try {
-        //hier wird der Text überschrieben
         statusEL.textContent = "Load data...";
 
-        //fetch(): Der Browser schickt eine Anfrage an diese URL
-        //und gibt die Antwort zurück
-        //wait: warte, bis der Browser dir die Daten geliefert hat
-        //bevor es mit dem Code weitergeht
         const res = await fetch("/LibraryMember");
-        //res.ok ist true, wenn statuscode 200-299
-        //bei 404 oder 500 -> false , dann wird der error gecatcht.
+
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        //Antwort vom Server wird in JS-Objekte umgewandelt.
+        
         const members = await res.json();
-        //tabelle wird zuerst geleert, um etwaige alte Daten zu entfernen
+        members.sort((a, b) => a.id - b.id);
+
         tbody.innerHTML = "";
 
         for (const m of members) {
-            //erstellt eine neue Zeile
             const tr = document.createElement("tr");
             tr.className = "member";
-            //erstellt neue Spalten
+
             const tdId = document.createElement("td");
-            //holt sich die id vom Objekt
+
             tdId.textContent = m.id;
 
             const tdName = document.createElement("td");
@@ -38,14 +29,14 @@ async function fetchLibraryMember() {
             const tdMember_id = document.createElement("td");
             tdMember_id.textContent = m.member_id;
 
+            const tdemail = document.createElement("td");
+            tdemail.textContent = m.email;
+
             const tdActions = document.createElement("td");
-            //beim Abrufen der Website ist die editingId immer 0, daher wird else ausgeführt.
+
             if (editingId === m.id) {
-                // If wird ausgeführt, wenn ein Eintrag bearbetet wird
-                //hier werden zwei neue Eingabefelder pro Zeile erstellt.
                 const nameInput = document.createElement("input");
                 nameInput.type = "text";
-                //in die Zeile wird automatisch der aktuelle Text eingetragen.
                 nameInput.value = m.name;
                 nameInput.className = "input-sm";
 
@@ -53,29 +44,28 @@ async function fetchLibraryMember() {
                 member_IdInput.type = "text";
                 member_IdInput.value = m.member_id;
                 member_IdInput.className = "input-sm";
-                //die erstellten Eingabefelder werden nun hinzugefügt
+                
+                const member_emailInput = document.createElement("input");
+                member_emailInput.type = "text";
+                member_emailInput.value = m.email;
+                member_emailInput.className = "input-sm";
+
                 tdName.appendChild(nameInput);
                 tdMember_id.appendChild(member_IdInput);
-                //neue Buttons werden erstellt
+                tdemail.appendChild(member_emailInput);
+                
                 const saveBtn = document.createElement("button");
                 saveBtn.textContent = "Speichern";
                 saveBtn.className = "save-btn";
-                //wenn auf den Button gedrückt wird, dann wird der Code ausgeführt
                 saveBtn.onclick = async () => {
-                    //Kontrolle, ob in beiden Feldern etwas eingetragen ist.
-                    if (!nameInput.value.trim() || !member_IdInput.value.trim()) {
-                        document.getElementById("status").textContent = "Name und Member_ID erforderlich.";
+                    if (!nameInput.value.trim() || !member_IdInput.value.trim() || !member_emailInput.value.trim()) {
+                        document.getElementById("status").textContent = "Name, Member_ID und E-Mail erforderlich.";
                         return;
                     }
-                    //Starte die Methode und warte auf ein promise/antwort
-                    //hier werden die daten nochmals getrimmt und so übergeben.
-                    await updateMember(m.id, {name: nameInput.value.trim(), member_id: member_IdInput.value.trim()});
-                    //die editingID wird wieder auf 0 gesetzt, damit alle Zeilen wieder normal angezeigt werden
+                    await updateMember(m.id, {name: nameInput.value.trim(), member_id: member_IdInput.value.trim(), email: member_emailInput.value.trim()});
                     editingId = null;
-                    //Funktion wird für die nächste Zeile erneut ausgeführt
                     await fetchLibraryMember();
                 };
-                //Abbrechen Button wird erstellt.
                 const cancelBtn = document.createElement("button");
                 cancelBtn.textContent = "Abbrechen";
                 cancelBtn.className = "cancel-btn";
@@ -89,6 +79,7 @@ async function fetchLibraryMember() {
                 // "Normale"-Ansicht der Zeilen wird erstellt.
                 tdName.textContent = m.name;
                 tdMember_id.textContent = m.member_id;
+                tdemail.textContent = m.email;
 
                 const editBtn = document.createElement("button");
                 editBtn.textContent = "Bearbeiten";
@@ -121,7 +112,7 @@ async function fetchLibraryMember() {
                 tdActions.append(editBtn, " ", delBtn, " ", label);
             }
             //Fügt die Zellen in die Zeile hinzu
-            tr.append(tdId, tdName, tdMember_id, tdActions);
+            tr.append(tdId, tdName, tdMember_id, tdemail, tdActions);
             //Fügt die Zeile in die Tabelle hinzu
             tbody.appendChild(tr);
         }
@@ -139,37 +130,50 @@ async function fetchLibraryMember() {
 //und die Tabelle erstellt und befüllt.
 window.addEventListener("DOMContentLoaded", fetchLibraryMember);
 
+function redirectIfUnauthorized(res) {
+    if (res.status === 401 || res.status === 403) {
+        window.location.href = "/login.html";
+        return true;
+    }
+    return false;
+}
+
 //button ist fix im html gecoded, führt diese funktion aus
 async function addClick() {
     const nameInput = document.getElementById("member-name");
     const name = nameInput.value.trim();
+
     const idInput = document.getElementById("member-id");
     const member_id = idInput.value.trim();
+
+    const emailInput = document.getElementById("member-email");
+    const email = emailInput.value.trim();
+
     const button = document.getElementById("add-btn");
     const statusEl = document.getElementById("status");
 
-    if (!name || !member_id) {
-        statusEl.textContent = "Name and id required.";
+    if (!name || !member_id || !email) {
+        statusEl.textContent = "Name, id and email required.";
         return;
     }
 
     button.disabled = true;
-    await addMember(name, member_id);
+    await addMember(name, member_id, email);
     button.disabled = false;
 
     nameInput.value = "";
     idInput.value = "";
+    emailInput.value = "";
     nameInput.focus();
 }
 
-
-async function addMember(name, member_id) {
+async function addMember(name, member_id, email) {
     const statusEl = document.getElementById("status");
     try {
         const res = await fetch("/LibraryMember", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, member_id }),
+            body: JSON.stringify({ name, member_id, email }),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         await fetchLibraryMember();
@@ -184,6 +188,9 @@ async function deleteMember(id) {
     const statusEl = document.getElementById("status");
     try {
         const res = await fetch(`/LibraryMember/${id}`, { method: "DELETE" });
+        
+        if (redirectIfUnauthorized(res)) return;
+
         if (res.status === 204) {
             statusEl.textContent = `LibraryMember ${id} removed.`;
         } else {
@@ -196,7 +203,7 @@ async function deleteMember(id) {
     }
 }
 
-async function updateMember(id, member_id) {
+async function updateMember(id, member_id, email) {
     const statusEl = document.getElementById("status");
     try {
         const res = await fetch(`/LibraryMember/${id}`, {
@@ -204,6 +211,9 @@ async function updateMember(id, member_id) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(member_id),
         });
+
+        if (redirectIfUnauthorized(res)) return;
+        
         if (!res.ok) {
             const msg = await res.json().catch(() => ({}));
             throw new Error(msg.error || `HTTP ${res.status}`);
